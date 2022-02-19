@@ -1,0 +1,6 @@
+{
+  "python.formatting.provider": "black",
+  "terminal.integrated.shell.osx": "/opt/homebrew/bin/fish",
+  "prettier.tabWidth": 4,
+  "prettier.printWidth": 120
+}

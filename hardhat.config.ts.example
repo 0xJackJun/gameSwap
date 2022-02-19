@@ -1,0 +1,58 @@
+import '@nomiclabs/hardhat-ethers';
+import '@nomiclabs/hardhat-etherscan';
+import 'hardhat-gas-reporter';
+import 'solidity-coverage';
+import 'hardhat-typechain';
+
+export default {
+    default: 'hardhat',
+    networks: {
+        hardhat: {
+            allowUnlimitedContractSize: false,
+        },
+        localhost: {
+            url: "http://127.0.0.1:8545"
+        },
+        ganache: {
+            url: "http://127.0.0.1:7545"
+        },
+        bsctestnet: {
+            url: "https://data-seed-prebsc-1-s1.binance.org:8545",
+        },
+        bsc: {
+            url: "https://https://bsc-dataseed1.binance.org:8545",
+        },
+        rinkeby: {
+            url: "https://rinkeby.infura.io/v3/{your private key}",
+            //accounts: [privateKey1, privateKey2, ...]
+        },
+        mainnet: {
+            url: "https://eth-mainnet.alchemyapi.io/v2/{your private key}",
+            //accounts: [privateKey1, privateKey2, ...]
+        },
+    },
+    solidity: {
+        version: '0.8.3',
+        settings: {
+            optimizer: {
+                enabled: true,
+                runs: 200,
+            },
+        },
+    },
+    paths: {
+        sources: './contracts',
+        tests: './test',
+        cache: './build/cache',
+        artifacts: './build/artifacts',
+    },
+    gasReporter: {
+        currency: 'USD',
+        enabled: true,
+    },
+    etherscan: {
+        // Your API key for Etherscan
+        // Obtain one at https://etherscan.io/
+        apiKey: '<api-key>',
+    },
+};

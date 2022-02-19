@@ -1,0 +1,100 @@
+type ERC20Token @entity {
+  # token address
+  id: ID! 
+
+  # mirrored from the smart contract
+  symbol: String!
+  name: String!
+  decimals: BigInt!
+
+  # 发行量
+  totalSupply: BigInt
+}
+# 客户端配置文件读取
+type ConfigAddress @entity {
+  # factory address
+  id: ID!
+
+  # 工厂合约地址
+  factoryAddress: Bytes!
+
+  # 外围路由合约 Router
+  routerAddress: Bytes!
+
+  # 保证金合约地址
+  gstToken: ERC20Token!
+
+  # WETH合约地址
+  wethToken: ERC20Token!
+
+  # USDT合约地址
+  usdtToken: ERC20Token!
+
+  # 区块浏览器地址
+  rpcUrl: String!
+
+  # 区块浏览器地址
+  blockUrl: String!
+
+  # 网络名称
+  networkName: String!
+
+  # chain_id
+  chainId: BigInt!
+
+  # 时间戳
+  timestamp: BigInt!
+
+  # 其他用来游戏的代币也可以随时配置添加
+  gameTokens: [ERC20Token!]!
+}
+
+# 游戏列表
+type GamePair @entity {
+  id: ID!
+
+  title: String! # 标题
+  locked: BigInt! # 是否解锁状态
+}
+
+# 游戏列表
+type GameInfo @entity {
+  id: ID!
+
+  token: ERC20Token! # 游戏代币币种
+  pair: GamePair! # 游戏合约地址
+  title: String! # 标题
+  url: String! # 结果网址
+  options: String! # 竞猜选项对应的顺序，用分号隔开，如三个比分选项  “2:1;1:1;1:2”
+  startSec: BigInt! # 游戏开始时间戳，也就是截止下注时间
+  endSec: BigInt! # 游戏结束时间戳，也就是结束时间到了才可输入结果
+  deadline: BigInt! # 允许的过期时间，秒级时间戳，建议设置为 当前时间戳+20min
+  initAmountsIn: [BigInt!]! # 初次提供流动性，对应选项需要的代币数，数组
+  amount: BigInt! # 初始的总金额数
+  side: BigInt! #  指定的某个选项序号
+  timestamp: BigInt! #  下注时间
+  betInfos: [BetInfo!]! @derivedFrom(field: "gameInfo") # 下注记录
+}
+
+# 下注记录
+type BetInfo @entity {
+  id: ID!
+
+  sender: Bytes! # 用户地址
+  token: Bytes! # 代币合约地址
+  gameInfo: GameInfo! # 所属游戏
+  side: BigInt! #  指定的某个选项序号
+  amount: BigInt! # 指定某个选项的下注金额
+  deadline: BigInt! # 允许的过期时间，秒级时间戳，建议设置为 当前时间戳+20min
+}
+
+type Token @entity {
+  id: ID!
+  tokenBalances: [TokenBalance!]! @derivedFrom(field: "token")
+}
+
+type TokenBalance @entity {
+  id: ID!
+  amount: Int!
+  token: Token!
+}

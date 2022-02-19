@@ -1,0 +1,93 @@
+specVersion: 0.0.2
+description: ConfigAddress for Ethereum
+repository: https://github.com/fatter-bo/hardcatstudy
+# 研发期报错先不挺
+features:
+  - nonFatalErrors
+schema:
+  file: ./schema.graphql
+dataSources:
+  - kind: ethereum/contract
+    name: ConfigAddress
+    network: mainnet #replace mainnet
+    source:
+      address: "0x3ca28b46685fA9014fd7D574A438E49f78dEb138" #{{CONFIGADDRESS_ADDRESS}}
+      abi: ConfigAddress
+      startBlock: 0 #{{STARTBLOCK}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - ConfigAddress
+      abis:
+        - name: ConfigAddress
+          file: ./abis/ConfigAddress.json
+        - name: ERC20
+          file: ./abis/ERC20.json
+        - name: ERC20SymbolBytes
+          file: ./abis/ERC20SymbolBytes.json
+        - name: ERC20NameBytes
+          file: ./abis/ERC20NameBytes.json
+      eventHandlers:
+        - event: UpsertConfig(indexed address,indexed address,address,address,address,string,string,string,indexed uint256)
+          handler: handleUpsertConfig
+        - event: UpsertGameToken(indexed address,indexed address,string)
+          handler: handleUpsertGameToken
+      #callHandlers:
+        #- function: createGravatar(string,string)
+        #  handler: handleCreateGravatar
+      #blockHandlers:
+      #  - handler: handleBlock
+        #- handler: handleBlockWithCallToContract
+        #  filter:
+        #    kind: call
+      file: ./src/mapping.ts
+
+  # GameRouter合约
+  - kind: ethereum/contract
+    name: GameRouter
+    network: mainnet #replace mainnet
+    source:
+      address: "0x7ecaD6fA0Ce61e43e1a02E2B9D64BA03BaCC41Db" #{{GAMEROUTER_ADDRESS}}
+      abi: GameRouter
+      startBlock: 0 #{{STARTBLOCK}}
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      entities:
+        - Games
+      abis:
+        - name: GameRouter
+          file: ./abis/GameRouter.json
+      eventHandlers:
+        # 创建游戏事件
+        - event: EventCreateGame(indexed address,indexed address,string[],uint256[],uint256[],uint256,uint256)
+          handler: handleEventCreateGame
+        # 下单事件
+        - event: EventBetForToken(indexed address,indexed address,indexed address,uint256,uint256,uint256)
+          handler: handleEventBetForToken
+      file: ./src/mapping.ts
+
+templates:
+  - kind: ethereum/contract
+    name: GamePair
+    network: mainnet #replace mainnet
+    source:
+      abi: GamePair 
+    mapping:
+      kind: ethereum/events
+      apiVersion: 0.0.4
+      language: wasm/assemblyscript
+      file: ./src/mapping.ts
+      entities:
+        - GamePair
+      abis:
+        - name: GamePair
+          file: ./abis/GamePair.json
+      eventHandlers:
+        - event: Transfer(indexed address,indexed address,uint256)
+          handler: handleTransfer
+        - event: Approval(indexed address,indexed address,uint256)
+          handler: handleApproval
